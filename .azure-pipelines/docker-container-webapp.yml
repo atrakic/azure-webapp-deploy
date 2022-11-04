@@ -34,7 +34,6 @@ variables:
   # ========================================================================
   #                           Optional variables
   # ========================================================================
-
   ACR.ImageName: '$(ACR.Name):$(Build.BuildId)'
   ACR.FullName: '$(ACR.Name).azurecr.io'
   Azure.CreateResources: 'true' # Update Azure.CreateResources to false if you have already created resources like resource group and azure container registry.
@@ -48,7 +47,6 @@ jobs:
   condition: and(succeeded(), eq(variables['Azure.CreateResources'], 'true'))
   pool:
     vmImage: ubuntu-latest
-
   steps:
   - task: AzureResourceGroupDeployment@2
     displayName: 'Azure Deployment:Create Azure Container Registry, Azure WebApp Service'
@@ -64,10 +62,8 @@ jobs:
   displayName: Build
   dependsOn: CreateResources
   condition: or(succeeded(), ne(variables['Azure.CreateResources'], 'true'))
-
   pool:
     vmImage: ubuntu-latest
-
   steps:
   - task: Docker@1
     displayName: 'Build an image'
@@ -77,7 +73,6 @@ jobs:
       imageName: '$(ACR.ImageName)'
       command: build
       dockerFile: '**/Dockerfile'
-
   - task: Docker@1
     displayName: 'Push an image'
     inputs:
@@ -90,10 +85,8 @@ jobs:
   displayName: Deploy
   dependsOn: BuildImage
   condition: succeeded()
-
   pool:
     vmImage: ubuntu-latest
-
   steps:
   - task: AzureWebAppContainer@1
     displayName: 'Azure Web App on Container Deploy: $(WebApp.Name)'
